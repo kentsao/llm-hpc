@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+
+# Data & artifacts (results/ dirs ARE committed — challenge evidence lives there)
+data/
+*.ckpt
+*.pt
+*.bin
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Notebooks
+.ipynb_checkpoints/

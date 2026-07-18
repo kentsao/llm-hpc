@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main, solutions]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+          enable-cache: true
+      - name: Install dependencies
+        run: uv sync
+      - name: Run tests (perf-threshold tests excluded on CI)
+        run: uv run pytest -m "not perf"
+        env:
+          CI: "true"
