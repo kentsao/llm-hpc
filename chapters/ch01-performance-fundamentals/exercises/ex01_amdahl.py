@@ -8,8 +8,7 @@ speedup = 1 / ((1 - p) + p / s)
 
 def amdahl_speedup(p: float, s: float) -> float:
     """Return the overall speedup when fraction p is accelerated by factor s."""
-    # TODO(you): one line.
-    raise NotImplementedError
+    return 1.0 / ((1.0 - p) + p / s)
 
 
 def max_speedup(p: float) -> float:
@@ -17,8 +16,9 @@ def max_speedup(p: float) -> float:
 
     (Take the limit analytically; don't pass a huge number.)
     """
-    # TODO(you)
-    raise NotImplementedError
+    if p >= 1.0:
+        return float("inf")
+    return 1.0 / (1.0 - p)
 
 
 def parallel_fraction(measured_speedup: float, s: float) -> float:
@@ -28,13 +28,19 @@ def parallel_fraction(measured_speedup: float, s: float) -> float:
     This is what you'll actually do in practice: run on 1 and on 8 cores,
     then infer how serial your program is.
     """
-    # TODO(you): solve the Amdahl equation for p.
-    raise NotImplementedError
+    return (1.0 - 1.0 / measured_speedup) / (1.0 - 1.0 / s)
 
 
 def workers_needed(p: float, target_speedup: float) -> int:
     """Smallest integer worker count s achieving target_speedup, or raise
     ValueError if the target exceeds max_speedup(p).
     """
-    # TODO(you): solve for s, then ceil. Watch the infeasible case.
-    raise NotImplementedError
+    import math
+
+    denom = 1.0 / target_speedup - (1.0 - p)
+    if denom <= 0:
+        raise ValueError(
+            f"target {target_speedup}x exceeds Amdahl ceiling {max_speedup(p):.2f}x for p={p}"
+        )
+    # tiny epsilon guards float error when the solution is an exact integer
+    return math.ceil(p / denom - 1e-9)

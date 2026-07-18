@@ -22,8 +22,14 @@ def blocked_matmul(A: np.ndarray, B: np.ndarray, bs: int) -> np.ndarray:
     k2, m = B.shape
     assert k == k2
     C = np.zeros((n, m))
-    # TODO(you): six loops. Get a 3x5 @ 5x2 case right before going big.
-    raise NotImplementedError
+    for ii in range(0, n, bs):
+        for pp in range(0, k, bs):
+            for jj in range(0, m, bs):
+                for i in range(ii, min(ii + bs, n)):
+                    for p in range(pp, min(pp + bs, k)):
+                        a = A[i, p]
+                        for j in range(jj, min(jj + bs, m)):
+                            C[i, j] += a * B[p, j]
     return C
 
 
@@ -40,8 +46,18 @@ def blocked_matmul_parallel(A: np.ndarray, B: np.ndarray, bs: int) -> np.ndarray
     k2, m = B.shape
     assert k == k2
     C = np.zeros((n, m))
-    # TODO(you)
-    raise NotImplementedError
+    # Parallelizing ii is safe: each i-block writes a disjoint set of C rows.
+    # Parallelizing pp would race: every p-block accumulates into the SAME C[i, j].
+    n_iblocks = (n + bs - 1) // bs
+    for bi in prange(n_iblocks):
+        ii = bi * bs
+        for pp in range(0, k, bs):
+            for jj in range(0, m, bs):
+                for i in range(ii, min(ii + bs, n)):
+                    for p in range(pp, min(pp + bs, k)):
+                        a = A[i, p]
+                        for j in range(jj, min(jj + bs, m)):
+                            C[i, j] += a * B[p, j]
     return C
 
 
@@ -49,5 +65,21 @@ def best_block_size(n: int = 384, candidates: tuple[int, ...] = (8, 16, 32, 64, 
     """Time blocked_matmul on an (n,n) problem for each candidate block size and
     return the fastest. Remember ch00: warm up (JIT!) and take a median of >=3.
     """
-    # TODO(you)
-    raise NotImplementedError
+    import statistics
+    import time
+
+    rng = np.random.default_rng(0)
+    A = rng.random((n, n))
+    B = rng.random((n, n))
+    best_bs, best_t = candidates[0], float("inf")
+    for bs in candidates:
+        blocked_matmul(A, B, bs)  # warm-up (includes JIT on first call)
+        times = []
+        for _ in range(3):
+            t0 = time.perf_counter()
+            blocked_matmul(A, B, bs)
+            times.append(time.perf_counter() - t0)
+        t = statistics.median(times)
+        if t < best_t:
+            best_bs, best_t = bs, t
+    return best_bs

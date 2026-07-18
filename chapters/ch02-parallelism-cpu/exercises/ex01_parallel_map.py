@@ -24,8 +24,10 @@ def chunked_parallel_map(
     - Use ProcessPoolExecutor; pool.map preserves order.
     - Concatenate and return.
     """
-    # TODO(you)
-    raise NotImplementedError
+    chunks = np.array_split(x, n_workers)
+    with ProcessPoolExecutor(n_workers) as pool:
+        results = list(pool.map(fn, chunks))
+    return np.concatenate(results)
 
 
 def _pi_chunk(args: tuple[int, int]) -> int:
@@ -33,8 +35,11 @@ def _pi_chunk(args: tuple[int, int]) -> int:
     quarter unit circle. Implement with a seeded np.random.default_rng —
     DIFFERENT seeds per worker, or all workers sample identical points!
     """
-    # TODO(you)
-    raise NotImplementedError
+    n_samples, seed = args
+    rng = np.random.default_rng(seed)
+    x = rng.random(n_samples)
+    y = rng.random(n_samples)
+    return int((x * x + y * y <= 1.0).sum())
 
 
 def parallel_pi(n_samples: int, n_workers: int = 4) -> float:
@@ -44,8 +49,11 @@ def parallel_pi(n_samples: int, n_workers: int = 4) -> float:
     Distribute samples across workers (sum of per-worker samples must equal
     n_samples exactly), give each a distinct seed, sum the hits.
     """
-    # TODO(you): build the (samples, seed) args list, map _pi_chunk over a pool.
-    raise NotImplementedError
+    base, rem = divmod(n_samples, n_workers)
+    args = [(base + (1 if i < rem else 0), i) for i in range(n_workers)]
+    with ProcessPoolExecutor(n_workers) as pool:
+        hits = sum(pool.map(_pi_chunk, args))
+    return 4.0 * hits / n_samples
 
 
 if __name__ == "__main__":

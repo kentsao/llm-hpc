@@ -28,16 +28,14 @@ def triad(a: np.ndarray, b: np.ndarray, c: np.ndarray, scalar: float) -> None:
       (Temporaries from `b + scalar * c` are acceptable for the basic version —
       the ★★ challenge asks you to eliminate them.)
     """
-    # TODO(you): implement the triad in place.
-    raise NotImplementedError
+    a[:] = b + scalar * c
 
 
 def triad_bytes(n: int, dtype: np.dtype) -> int:
     """Return the number of bytes of memory traffic one triad over n elements
     performs, using STREAM's counting convention (each array traversed once).
     """
-    # TODO(you): how many arrays are traversed, at how many bytes per element?
-    raise NotImplementedError
+    return 3 * n * dtype.itemsize  # read b, read c, write a
 
 
 def measure_bandwidth(n: int = 50_000_000) -> float:
@@ -49,8 +47,15 @@ def measure_bandwidth(n: int = 50_000_000) -> float:
          passing bytes_moved=triad_bytes(...).
       3. Return the result's .gb_per_s.
     """
-    # TODO(you): allocate, benchmark, return GB/s.
-    raise NotImplementedError
+    a = np.zeros(n)
+    b = np.ones(n)
+    c = np.ones(n)
+    r = benchmark(
+        lambda: triad(a, b, c, 2.5),
+        name="stream triad",
+        bytes_moved=triad_bytes(n, a.dtype),
+    )
+    return r.gb_per_s
 
 
 if __name__ == "__main__":

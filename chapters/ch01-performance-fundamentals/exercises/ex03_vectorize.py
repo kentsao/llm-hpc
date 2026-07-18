@@ -22,8 +22,8 @@ def softmax_rows_loop(x: np.ndarray) -> np.ndarray:
 
 def softmax_rows(x: np.ndarray) -> np.ndarray:
     """Numerically stable softmax over the last axis, no Python loop."""
-    # TODO(you): max/exp/sum with keepdims=True.
-    raise NotImplementedError
+    e = np.exp(x - x.max(axis=-1, keepdims=True))
+    return e / e.sum(axis=-1, keepdims=True)
 
 
 # --- 2. Pairwise squared distances (kNN, clustering, RoPE-ish geometry) -----
@@ -43,8 +43,9 @@ def pairwise_sq_dists(x: np.ndarray, y: np.ndarray) -> np.ndarray:
 
     Clip tiny negative values (floating-point) to 0 before returning.
     """
-    # TODO(you): ||x||^2 + ||y||^2 - 2 x@y.T with broadcasting.
-    raise NotImplementedError
+    x2 = (x * x).sum(axis=1)[:, None]
+    y2 = (y * y).sum(axis=1)[None, :]
+    return np.maximum(x2 + y2 - 2.0 * (x @ y.T), 0.0)
 
 
 # --- 3. Moving average (signal smoothing; think loss curves) ----------------
@@ -58,5 +59,5 @@ def moving_average_loop(x: np.ndarray, w: int) -> np.ndarray:
 
 def moving_average(x: np.ndarray, w: int) -> np.ndarray:
     """Window-w moving average in O(n), no Python loop."""
-    # TODO(you): cumsum trick or np.convolve.
-    raise NotImplementedError
+    c = np.concatenate(([0.0], np.cumsum(x)))
+    return (c[w:] - c[:-w]) / w

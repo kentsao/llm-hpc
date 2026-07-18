@@ -37,8 +37,21 @@ def histogram_fixed(x: np.ndarray, n_bins: int, n_chunks: int = 8) -> np.ndarray
     Chunk boundaries: split x.size as evenly as you can; make sure every element
     is counted exactly once (check start/end arithmetic for the last chunk).
     """
-    # TODO(you)
-    raise NotImplementedError
+    partials = np.zeros((n_chunks, n_bins), dtype=np.int64)
+    chunk = (x.size + n_chunks - 1) // n_chunks
+    for c in prange(n_chunks):
+        start = c * chunk
+        end = min(start + chunk, x.size)
+        for i in range(start, end):
+            b = int(x[i] * n_bins)
+            if b == n_bins:
+                b -= 1
+            partials[c, b] += 1
+    out = np.zeros(n_bins, dtype=np.int64)
+    for c in range(n_chunks):
+        for b in range(n_bins):
+            out[b] += partials[c, b]
+    return out
 
 
 if __name__ == "__main__":
