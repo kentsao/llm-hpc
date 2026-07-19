@@ -11,7 +11,7 @@ Tick items as you complete them. Each chapter also has a GitHub Issue with the s
 - [x] Challenge ★ complete
 - [ ] Challenge ★★ complete
 - [ ] Challenge ★★★ attempted
-- [ ] PR merged
+- [x] PR merged
 
 ### ch01 · Performance Fundamentals
 - [ ] Read README, ran all examples

@@ -12,3 +12,5 @@ STREAM triad bandwidth: 47.0 GB/s -> about 2/3 of SPEC
 # Why temporary-free version is faster
 Temporary-free version is faster because that no extra data movement and can reduce the overall time of computation.
 
+# Challenges II & III
+I think I know the bottleneck and context switch delay due to heavy load. Also, the colab operation is fine for me. Therefore I skip these tutorials.
