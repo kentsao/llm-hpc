@@ -9,8 +9,8 @@ Tick items as you complete them. Each chapter also has a GitHub Issue with the s
 - [x] Read README, ran all examples
 - [x] Exercises pass (`uv run pytest chapters/ch00-setup/tests`)
 - [x] Challenge ★ complete
-- [ ] Challenge ★★ complete
-- [ ] Challenge ★★★ attempted
+- [x] Challenge ★★ complete (three triad variants + byte accounting — see results/parallel_result.md)
+- [ ] Challenge ★★★ attempted (skipped by choice)
 - [x] PR merged
 
 ### ch01 · Performance Fundamentals
