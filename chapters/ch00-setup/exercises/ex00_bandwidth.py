@@ -18,7 +18,9 @@ import numpy as np
 
 from common import benchmark
 
+from numba import njit
 
+@njit(parallel=True)
 def triad(a: np.ndarray, b: np.ndarray, c: np.ndarray, scalar: float) -> None:
     """Compute a[i] = b[i] + scalar * c[i] IN PLACE (write into `a`).
 
@@ -29,7 +31,14 @@ def triad(a: np.ndarray, b: np.ndarray, c: np.ndarray, scalar: float) -> None:
       the ★★ challenge asks you to eliminate them.)
     """
     # TODO(you): implement the triad in place.
-    raise NotImplementedError
+    #raise NotImplementedError
+    # Naive
+    a[:] = b + scalar * c
+
+    # Numpy Multiply
+    #np.multiply(c, scalar, out=a)
+    #a += b
+
 
 
 def triad_bytes(n: int, dtype: np.dtype) -> int:
@@ -37,7 +46,9 @@ def triad_bytes(n: int, dtype: np.dtype) -> int:
     performs, using STREAM's counting convention (each array traversed once).
     """
     # TODO(you): how many arrays are traversed, at how many bytes per element?
-    raise NotImplementedError
+    #raise NotImplementedError
+    return 3 * n * dtype.itemsize
+
 
 
 def measure_bandwidth(n: int = 50_000_000) -> float:
@@ -50,7 +61,12 @@ def measure_bandwidth(n: int = 50_000_000) -> float:
       3. Return the result's .gb_per_s.
     """
     # TODO(you): allocate, benchmark, return GB/s.
-    raise NotImplementedError
+    #raise NotImplementedError
+    a = np.zeros(n)
+    b = np.random.random(n)
+    c = np.random.random(n)
+    result = benchmark(lambda: triad(a,b,c,2.5), bytes_moved=triad_bytes(n, np.dtype(np.float64)))
+    return result.gb_per_s
 
 
 if __name__ == "__main__":

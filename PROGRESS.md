@@ -5,10 +5,10 @@ Tick items as you complete them. Each chapter also has a GitHub Issue with the s
 ## Month 1 — Foundations
 
 ### ch00 · Setup & Tooling
-- [ ] Environment set up (`uv sync` works, `uv run pytest` runs)
-- [ ] Read README, ran all examples
-- [ ] Exercises pass (`uv run pytest chapters/ch00-setup/tests`)
-- [ ] Challenge ★ complete
+- [x] Environment set up (`uv sync` works, `uv run pytest` runs)
+- [x] Read README, ran all examples
+- [x] Exercises pass (`uv run pytest chapters/ch00-setup/tests`)
+- [x] Challenge ★ complete
 - [ ] Challenge ★★ complete
 - [ ] Challenge ★★★ attempted
 - [ ] PR merged
