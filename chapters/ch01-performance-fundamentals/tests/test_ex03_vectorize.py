@@ -32,6 +32,16 @@ def test_pairwise_sq_dists_matches_reference():
     assert np.all(out >= 0), "negative distances — clip floating-point residue"
 
 
+def test_pairwise_sq_dists_identical_points_stay_nonnegative():
+    # Identical/near-identical points make the expansion trick cancel to ~0,
+    # where fp rounding can dip negative — sqrt would then produce NaN.
+    x = rng.standard_normal((10, 8)) * 3.7
+    y = x.copy()  # every diagonal pair is exactly identical
+    out = run_exercise(ex.pairwise_sq_dists, x, y)
+    assert np.all(out >= 0), "negative residue on identical points — did you clip?"
+    assert not np.any(np.isnan(np.sqrt(out)))
+
+
 def test_moving_average_matches_reference():
     x = rng.standard_normal(500)
     out = run_exercise(ex.moving_average, x, 7)

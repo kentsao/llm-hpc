@@ -35,5 +35,13 @@ def test_workers_needed():
 
 def test_workers_needed_is_minimal():
     s = run_exercise(ex.workers_needed, 0.95, 6.0)
+    assert isinstance(s, int), "worker counts are integers — ceil the continuous solution"
+    assert s == 9  # continuous solution is 8.14…, so 9 is the smallest feasible count
     assert 1 / (0.05 + 0.95 / s) >= 6.0 - 1e-9
     assert 1 / (0.05 + 0.95 / (s - 1)) < 6.0
+
+
+def test_workers_needed_infeasible_at_exact_ceiling():
+    # max_speedup(0.9) == 10 is a supremum: no finite worker count attains it.
+    with pytest.raises(ValueError):
+        run_exercise(ex.workers_needed, 0.9, 10.0)
