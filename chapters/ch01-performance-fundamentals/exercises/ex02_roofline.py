@@ -28,14 +28,15 @@ def elementwise_cost(n: int, flops_per_elt: int = 1, n_inputs: int = 2) -> tuple
     """(flops, bytes) for an elementwise op over n float32 elements with
     `n_inputs` input arrays and one output array."""
     # TODO(you)
-    raise NotImplementedError
+    # raise NotImplementedError
+    return (n * flops_per_elt, (n_inputs + 1) * n * 4)
 
 
 def matmul_cost(m: int, k: int, n: int) -> tuple[int, int]:
     """(flops, bytes) for (m,k) @ (k,n) in float32, minimum-traffic convention."""
     # TODO(you): flops = 2*m*k*n; count bytes for A, B, and the output.
-    raise NotImplementedError
-
+    #raise NotImplementedError
+    return (2*m*k*n, (m*n+m*k+k*n)*4)
 
 def attention_scores_cost(batch: int, heads: int, seq: int, head_dim: int) -> tuple[int, int]:
     """(flops, bytes) for computing S = Q @ K^T over all batch*heads:
@@ -45,24 +46,28 @@ def attention_scores_cost(batch: int, heads: int, seq: int, head_dim: int) -> tu
     its size here is the setup for ch07.
     """
     # TODO(you): it's a batch of matmuls; don't forget S itself in the bytes.
-    raise NotImplementedError
+    #raise NotImplementedError
+    return (2 * batch * heads * seq * seq * head_dim, 4*(2 * (batch * heads * seq * head_dim) + (batch*heads*seq*seq)))
 
 
 def arithmetic_intensity(flops: int, nbytes: int) -> float:
     # TODO(you)
-    raise NotImplementedError
+    #raise NotImplementedError
+    return flops/nbytes
 
 
 def classify(flops: int, nbytes: int, hw: Hardware) -> str:
     """Return "memory-bound" or "compute-bound" for this kernel on this hardware."""
     # TODO(you): compare AI with hw.ridge_point.
-    raise NotImplementedError
+    #raise NotImplementedError
+    return "memory-bound" if arithmetic_intensity(flops, nbytes) < (hw.peak_gflops/hw.peak_gbs) else "compute-bound"
 
 
 def predicted_gflops(flops: int, nbytes: int, hw: Hardware) -> float:
     """Roofline prediction: best-achievable GFLOP/s for this kernel on hw."""
     # TODO(you): min(flat roof, slanted roof).
-    raise NotImplementedError
+    #raise NotImplementedError
+    return min(hw.peak_gflops, arithmetic_intensity(flops, nbytes)*hw.peak_gbs)
 
 
 if __name__ == "__main__":

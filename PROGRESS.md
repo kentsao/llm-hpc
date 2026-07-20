@@ -14,10 +14,10 @@ Tick items as you complete them. Each chapter also has a GitHub Issue with the s
 - [x] PR merged
 
 ### ch01 · Performance Fundamentals
-- [ ] Read README, ran all examples
-- [ ] Exercises pass
-- [ ] Challenges: ★ [ ] ★★ [ ] ★★★ [ ]
-- [ ] PR merged
+- [x] Read README, ran all examples
+- [x] Exercises pass
+- [ ] Challenges: ★ [ ] ★★ [ ] ★★★ [ ]  (deferred — focusing on the basics first)
+- [x] PR merged
 
 ### ch02 · CPU Parallelism
 - [ ] Read README, ran all examples
